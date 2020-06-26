@@ -131,8 +131,10 @@ document.addEventListener("DOMContentLoaded", function(){
                                 margin: 3,
                                 textAlign: "left",
                             },
+                            // 데이터와 매핑
                             new go.Binding("text", "key"),
                             new go.Binding("stroke", "color",
+                                // 
                                 function(color){
                                     return go.Brush.isDark(color[0]) ? "white" : go.Brush.darkenBy(color[0], .8);
                                 }
@@ -144,13 +146,15 @@ document.addEventListener("DOMContentLoaded", function(){
                 )
             )
         );
+    // 선 설정
     myDiagram.linkTemplate =
     $(go.Link, {
+            // 다이어그램 피하는 옵션
             routing: go.Link.AvoidsNodes,
             curve: go.Link.JumpGap },
         $(go.Shape, { strokeWidth: 2 }),
         $(go.Shape, { toArrow: "OpenTriangle" }),
-
+        // 데이터에 isInnerGroupLink 값을 이용해 fromSpot를 설정
         new go.Binding("fromSpot", "isInnerGroupLink", 
             function(isInnerGroupLink){
                 if(isInnerGroupLink == "inToGroup"){
@@ -160,6 +164,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 }
             }
         ),
+        // 데이터에 isInnerGroupLink 값을 이용해 toSpot를 설정
         new go.Binding("toSpot", "isInnerGroupLink", 
             function(isInnerGroupLink){
                 if(isInnerGroupLink == "inToGroup"){
@@ -186,6 +191,8 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 /**
+ * 시스템 타입별 색상 지정 메소드
+ * 
  * @author wookim
  * @since 2020.06.25
  * @param model : 다이어그램 데이터
@@ -224,7 +231,15 @@ function setColorByType(model){
     });
     return model;
 }
-
+/**
+ * 내부 그룹 간 연결인지 확인하는 메소드
+ * 
+ * 
+ * @author wookim
+ * @since 2020.06.26
+ * @param {*} node 
+ * @param {*} link 
+ */
 function checkInnerConnection(node, link){
     // link 배열 순회
     link.forEach(linkRow =>{
@@ -232,7 +247,6 @@ function checkInnerConnection(node, link){
         var searchOutToGroupKey = linkRow.from;
         var toKey = linkRow.to;
         var fromKey = linkRow.from;
-        var stack = [];
         var isInnerGroupLink = "outToAnotherGroupOrNode";
 
         // node 배열 순회

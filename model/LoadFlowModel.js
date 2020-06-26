@@ -21,6 +21,10 @@ var flowArray = [{
     from: "정보시스템1", to: "플랫폼2"
 },{
     from: "정보시스템1", to: "정보시스템2"
+},{
+    from: "정보시스템3", to: "정보시스템2"
+},{
+    from: "정보시스템2", to: "정보시스템1"
 }];
     return flowArray;
 }
