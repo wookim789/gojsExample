@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function(){
                             // 데이터와 매핑
                             new go.Binding("text", "key"),
                             new go.Binding("stroke", "color",
-                                // 
+                                // 색상에 따라 어두우면 글색을 밝게, 밝으면 어둡게 설정
                                 function(color){
                                     return go.Brush.isDark(color[0]) ? "white" : go.Brush.darkenBy(color[0], .8);
                                 }
@@ -146,48 +146,46 @@ document.addEventListener("DOMContentLoaded", function(){
                 )
             )
         );
-    // 선 설정
+    // link 설정
     myDiagram.linkTemplate =
-    $(go.Link, {
-            // 다이어그램 피하는 옵션
-            routing: go.Link.AvoidsNodes,
-            curve: go.Link.JumpGap },
-        $(go.Shape, { strokeWidth: 2 }),
-        $(go.Shape, { toArrow: "OpenTriangle" }),
-        // 데이터에 isInnerGroupLink 값을 이용해 fromSpot를 설정
-        new go.Binding("fromSpot", "isInnerGroupLink", 
-            function(isInnerGroupLink){
-                if(isInnerGroupLink == "inToGroup"){
-                    return  go.Spot.LeftSide;
-                }else if(isInnerGroupLink == "outToGroup"){
-                    return  go.Spot.RightSide;
+        $(go.Link, {
+                // 다이어그램을 피해 연결하는 옵션
+                routing: go.Link.AvoidsNodes,
+                curve: go.Link.JumpGap },
+            $(go.Shape, { strokeWidth: 2 }),
+            $(go.Shape, { toArrow: "OpenTriangle" }),
+            // 데이터에 isInnerGroupLink 값을 이용해 fromSpot를 설정
+            new go.Binding("fromSpot", "isInnerGroupLink", 
+                function(isInnerGroupLink){
+                    if(isInnerGroupLink == "inToGroup"){
+                        return  go.Spot.LeftSide;
+                    }else if(isInnerGroupLink == "outToGroup"){
+                        return  go.Spot.RightSide;
+                    }
                 }
-            }
-        ),
-        // 데이터에 isInnerGroupLink 값을 이용해 toSpot를 설정
-        new go.Binding("toSpot", "isInnerGroupLink", 
-            function(isInnerGroupLink){
-                if(isInnerGroupLink == "inToGroup"){
-                    return  go.Spot.LeftSide;
-                }else if(isInnerGroupLink == "outToGroup"){
-                    return  go.Spot.RightSide;
+            ),
+            // 데이터에 isInnerGroupLink 값을 이용해 toSpot를 설정
+            new go.Binding("toSpot", "isInnerGroupLink", 
+                function(isInnerGroupLink){
+                    if(isInnerGroupLink == "inToGroup"){
+                        return  go.Spot.LeftSide;
+                    }else if(isInnerGroupLink == "outToGroup"){
+                        return  go.Spot.RightSide;
+                    }
                 }
-             }
-        )
-    );
+            )
+        );
 
-    // 데이터 로드
+    // node 데이터 로드
     var systemModel = LoadSystemModel();
     systemModel = setColorByType(systemModel);
-
+    // link 데이터 로드
     var flowModel = LoadFlowModel();
     checkInnerConnection(systemModel, flowModel);
 
-
     var model = $(go.Model);
-    console.log(myDiagram.groupTemplate);
+    // 위 두 데이터를 go diagram에 매핑
     myDiagram.model = new go.GraphLinksModel(systemModel, flowModel);
-    myDiagram.groupTemplate.findSubGraphParts();
 });
 
 /**
@@ -196,11 +194,11 @@ document.addEventListener("DOMContentLoaded", function(){
  * @author wookim
  * @since 2020.06.25
  * @param model : 다이어그램 데이터
- * 
  */
 function setColorByType(model){
     var color1 = "";
     var color2 = "";
+
     model.forEach(map => {
         switch (map.type){
             case "system":
@@ -222,11 +220,12 @@ function setColorByType(model){
             default :
                 color1 = "white";
                 color2 = "white";
+                break;
         }
         var colorArr = map.color;
         colorArr[0] = color1;
         colorArr[1] = color2;
-
+        
         map.color = colorArr;
     });
     return model;
