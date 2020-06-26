@@ -231,9 +231,9 @@ function setColorByType(model){
     });
     return model;
 }
+
 /**
  * 내부 그룹 간 연결인지 확인하는 메소드
- * 
  * 
  * @author wookim
  * @since 2020.06.26
